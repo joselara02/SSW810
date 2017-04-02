@@ -112,6 +112,7 @@ class Repository:
                     instructor_data[instructor_id].courses_taught(course)
 
 
+
     def instructor_table(self, data):
         instructor_table = PrettyTable(["CWID", "Name", "Dept", 'Course', 'Students'])
 
