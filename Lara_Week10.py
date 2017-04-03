@@ -221,6 +221,7 @@ class Repository:
 
 # Main Program
 def main():
+    """Program starts here"""
     repo = Repository()
     majors = Major()
     student_data = repo.read_data('students.txt')
