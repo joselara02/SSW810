@@ -7,11 +7,33 @@
 #   This program gets data from files and uses Pretty table to display it
 #   This program was completed using Python 3.5.1
 
-
+# Library imports
+import unittest
 from _collections import defaultdict
 from prettytable import PrettyTable
 
 
+# Test Classes
+class StudentTest(unittest.TestCase):
+    def test__init__(self):
+        stu = Student('123', 'Jose', 'SFEN')
+        self.assertEqual(Student('123', 'Jose', 'SFEN').name, stu.name, True)
+        self.assertEqual(Student('123', 'Jose', 'SFEN').major, stu.major, True)
+
+    def test_assign_grade(self):
+        stu = Student('123', 'Jose', 'SFEN')
+        stu.assign_grade('SSW 540', 'A')
+        stu2 = Student('123', 'Jose', 'SFEN')
+        stu2.assign_grade('SSW 540', 'A')
+
+        self.assertEqual(stu2.get_courses(), stu.get_courses(), True)
+class InstructorTest(unittest.TestCase):
+    def test__init__(self):
+        inst = Instructor('3321', 'James Rowland', 'SFEN')
+        self.assertNotEqual(Student('123', 'Jose', 'SFEN').name, inst.name, True)
+
+
+# Program
 class Student:
     '''defines a object of Student type'''
 
@@ -71,7 +93,6 @@ class Major:
             self.required_system_engineering.add(course)
         else:
             print('{} does not belong to {} major'.format(course, major))
-
 
     def get_missing_courses(self, student):
         '''get the missing courses for the major required by students'''
@@ -176,7 +197,6 @@ class Repository:
 
                     return major_class
 
-
     def instructor_table(self, data):
         '''Displays a pretty Table for instructors data'''
         instructor_table = PrettyTable(["CWID", "Name", "Dept", 'Course', 'Students'])
@@ -199,6 +219,7 @@ class Repository:
         print(student_table)
 
 
+# Main Program
 def main():
     repo = Repository()
     majors = Major()
@@ -213,3 +234,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    #unittest.main(exit=False, verbosity=2)
