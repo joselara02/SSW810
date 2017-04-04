@@ -123,7 +123,7 @@ class Repository:
                     for line in each_line:
                         CWID, name, dept = line.strip('\n').split('\t')
 
-                        dict_data.update(({CWID: Student(CWID, name, dept)}))
+                        dict_data[CWID] = Student(CWID, name, dept)
 
                     return dict_data
 
@@ -150,7 +150,7 @@ class Repository:
                     for line in each_line:
                         CWID, name, dept = line.strip('\n').split('\t')
 
-                        dict_data.update(({CWID: Instructor(CWID, name, dept)}))
+                        dict_data[CWID] = Instructor(CWID, name, dept)
 
                     return dict_data
 
