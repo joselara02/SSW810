@@ -82,38 +82,25 @@ class Instructor:
 class Major:
     '''stores the require courses for SFEN and SYEN students'''
     def __init__(self):
-        self.required_software_engineering = set()
-        self.required_system_engineering = set()
+        self.majors_data = dict()
 
     def set_major_requirements(self, major, course):
         '''sets the major required by students'''
-        if major == 'SFEN':
-            self.required_software_engineering.add(course)
-        elif major == 'SYEN':
-            self.required_system_engineering.add(course)
-        else:
-            print('{} does not belong to {} major'.format(course, major))
+        self.majors_data.setdefault(major, []).append(course)
 
     def get_missing_courses(self, student):
         '''get the missing courses for the major required by students'''
         for key, value in student.items():
             course_taken = set([x for x in student[key].get_courses()])
             student_major = student[key].major
-
-            if student_major == 'SFEN':
-                remainder = list(self.required_software_engineering - course_taken)
-                student[key].set_missing_courses(remainder)
-            if student_major == 'SYEN':
-                remainder = list(self.required_system_engineering - course_taken)
-                student[key].set_missing_courses(remainder)
-
-        return None
+            remainder = set(self.majors_data[student_major]) - course_taken
+            student[key].set_missing_courses(remainder)
 
 
 class Repository:
     '''defines a object of Repository type. It holds all students, instructors and grades.'''
 
-    def read_data(self, file_name):
+    def read_student_data(self, file_name):
         '''Read files for students and instructor data'''
         try:
             open(file_name, "r")
@@ -136,14 +123,34 @@ class Repository:
                     for line in each_line:
                         CWID, name, dept = line.strip('\n').split('\t')
 
-                        if file_name == 'students.txt':
-                            dict_data.update({CWID: Student(CWID, name, dept)})
+                        dict_data.update(({CWID: Student(CWID, name, dept)}))
 
-                        elif file_name == 'instructors.txt':
-                            dict_data.update({CWID: Instructor(CWID, name, dept)})
+                    return dict_data
 
-                        else:
-                            return None
+    def read_instrutor_data(self, file_name):
+        '''Read files for students and instructor data'''
+        try:
+            open(file_name, "r")
+
+        except FileNotFoundError:
+            print(file_name, "file cannot be opened!")
+
+        except IOError:
+            print('Please check that file is not corrupted.')
+
+        else:
+            with open(file_name, 'r') as file_opened:
+                # reading data from file
+                each_line = file_opened.readlines()
+
+                if len(each_line) == 0:
+                    raise ValueError('file is empty')
+                else:
+                    dict_data = defaultdict(lambda: defaultdict(str))
+                    for line in each_line:
+                        CWID, name, dept = line.strip('\n').split('\t')
+
+                        dict_data.update(({CWID: Instructor(CWID, name, dept)}))
 
                     return dict_data
 
@@ -224,8 +231,8 @@ def main():
     """Program starts here"""
     repo = Repository()
     majors = Major()
-    student_data = repo.read_data('students.txt')
-    instructor_data = repo.read_data('instructors.txt')
+    student_data = repo.read_student_data('students.txt')
+    instructor_data = repo.read_instrutor_data('instructors.txt')
     repo.read_grades_file('grades.txt', student_data, instructor_data)
     repo.read_majors('majors.txt', majors)
     majors.get_missing_courses(student_data)
